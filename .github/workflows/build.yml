@@ -1,0 +1,70 @@
+name: Build Windows Installer
+
+on:
+  push:
+    tags:
+      - 'v*'          # 推 v1.0、v1.1 等 tag 時自動觸發
+  workflow_dispatch:  # 也可在 GitHub 網頁上手動觸發
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      # ── 1. 取得原始碼 ─────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── 2. 安裝 Python 3.12 ───────────────────────────────────────────────
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # ── 3. 安裝 Python 相依套件 + PyInstaller ────────────────────────────
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pygame moderngl "sounddevice>=0.4.6" aubio pyinstaller
+
+      # ── 4. PyInstaller 打包 ───────────────────────────────────────────────
+      - name: Build with PyInstaller
+        run: pyinstaller guitar_viz.spec --clean --noconfirm
+
+      # ── 5. 安裝 Inno Setup（透過 Chocolatey，runner 內建）────────────────
+      - name: Install Inno Setup
+        run: choco install innosetup --yes --no-progress
+
+      # ── 6. 編譯成 .exe 安裝程式 ──────────────────────────────────────────
+      - name: Compile installer
+        run: '& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss'
+        shell: powershell
+
+      # ── 7. 上傳安裝檔為 Artifact（每次 build 都可下載）──────────────────
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GuitarViz-Setup
+          path: Output/GuitarViz_Setup.exe
+          retention-days: 30
+
+      # ── 8. 發佈 Release（只在推 tag 時執行）─────────────────────────────
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: GuitarViz ${{ github.ref_name }}
+          body: |
+            ## GuitarViz ${{ github.ref_name }}
+
+            ### 安裝方式
+            1. 下載 `GuitarViz_Setup.exe`
+            2. 雙擊執行，按照安裝精靈操作
+            3. 從桌面或開始功能表啟動 **GuitarViz**
+
+            ### 系統需求
+            - Windows 10/11 x64
+            - 顯示卡支援 OpenGL 4.1（獨顯或現代內顯均可）
+            - 音訊輸入裝置（麥克風或音效介面）
+          files: Output/GuitarViz_Setup.exe
+          fail_on_unmatched_files: true
