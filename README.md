@@ -2,23 +2,39 @@
 
 Real-time electric guitar visualizer with GPU-accelerated particle effects.
 
+## ⬇️ Download
+
+[![Download](https://img.shields.io/github/v/release/chenisan/guitarvx?label=Download%20Installer&style=for-the-badge&color=6a0dad)](https://github.com/chenisan/guitarvx/releases/latest/download/GuitarViz_Setup.exe)
+
+> Windows 10/11 x64 only — double-click to install, no other software required.
+
+---
+
 ## Features
 
-- Real-time audio analysis (pitch, onset, frequency bands)
+- Real-time pitch and onset detection via aubio (YIN + HFC)
 - GPU-accelerated particle system with fluid curl-noise motion
-- Three-band frequency visualization (purple=high, green=mid, blue=low)
-- Bloom, trail effects and screen shake on note attacks
-- Fullscreen at native resolution (2560×1440 tested)
+- Three-band frequency visualization — purple (high) / green (mid) / blue (low)
+- Bloom glow, trail effects and screen shake on note attacks
+- Breathing blue ring that pulses with low-frequency energy
+- Fullscreen at native resolution (tested at 2560×1440, 144 fps)
 
-## Requirements
+## System Requirements
 
-- Windows 10/11 x64
-- GPU with OpenGL 4.1 support
-- Audio input device (microphone or audio interface)
+| | |
+|---|---|
+| OS | Windows 10 / 11 x64 |
+| GPU | OpenGL 4.1+ (any modern discrete or integrated GPU) |
+| Audio | Microphone or audio interface |
 
-## Installation
+## Keyboard Shortcuts
 
-Download `GuitarViz_Setup.exe` from the [Releases](https://github.com/chenisan/guitarvx/releases) page and run it.
+| Key | Action |
+|-----|--------|
+| `ESC` | Quit |
+| `Space` | Pause / Resume |
+| `F` | Toggle fullscreen |
+| `C` | Toggle color mode (pitch / random) |
 
 ## License
 
