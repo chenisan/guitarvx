@@ -1,6 +1,5 @@
 ; Inno Setup script for GuitarViz
 ; Requires Inno Setup 6: https://jrsoftware.org/isdl.php
-; This is compiled automatically by build_windows.ps1 if Inno Setup is installed.
 
 #define MyAppName      "GuitarViz"
 #define MyAppVersion   "1.0"
@@ -13,16 +12,27 @@ AppId={{A3F8B2C1-4D7E-4F9A-B123-567890ABCDEF}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
+AppContact=https://github.com/chenisan/guitarvx
+
+; 安裝路徑
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
+
+; 解除安裝顯示設定（出現在「控制台 → 程式和功能」）
+UninstallDisplayName={#MyAppName} {#MyAppVersion}
+UninstallDisplayIcon={app}\{#MyAppExeName}
+
+; 需要管理員權限才能正確登錄到控制台
+PrivilegesRequired=admin
+ArchitecturesInstallIn64BitMode=x64
+MinVersion=10.0
+
+; 輸出
 OutputDir=Output
 OutputBaseFilename=GuitarViz_Setup
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
-PrivilegesRequired=lowest
-ArchitecturesInstallIn64BitMode=x64
-MinVersion=10.0
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -31,13 +41,16 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "Create a &desktop shortcut"; GroupDescription: "Additional icons:"
 
 [Files]
-; Include all files from the PyInstaller output folder
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\{#MyAppName}";       Filename: "{app}\{#MyAppExeName}"
-Name: "{group}\Uninstall {#MyAppName}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{group}\{#MyAppName}";             Filename: "{app}\{#MyAppExeName}"
+Name: "{group}\Uninstall {#MyAppName}";   Filename: "{uninstallexe}"
+Name: "{commondesktop}\{#MyAppName}";     Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch {#MyAppName}"; Flags: nowait postinstall skipifsilent
+
+[UninstallDelete]
+; 解除安裝時一併清除整個安裝資料夾（包含 PyInstaller 產生的所有 DLL）
+Type: filesandordirs; Name: "{app}"
