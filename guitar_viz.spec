@@ -55,6 +55,7 @@ exe = EXE(
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
+    manifest='GuitarViz.manifest',
     icon=None,          # replace with 'icon.ico' if you have one
 )
 

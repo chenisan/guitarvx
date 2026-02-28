@@ -36,6 +36,11 @@ WizardStyle=modern
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
+
+[CustomMessages]
+english.SmartScreenNote=Note: Windows SmartScreen may show a warning because this app is not yet code-signed. Click "More info" then "Run anyway" to proceed.
+chinesesimplified.SmartScreenNote=注意：因本程式尚未購買程式碼簽章憑證，Windows SmartScreen 可能顯示警告。請點選「更多資訊」→「仍要執行」即可正常安裝。
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop shortcut"; GroupDescription: "Additional icons:"
@@ -47,6 +52,12 @@ Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs 
 Name: "{group}\{#MyAppName}";             Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\Uninstall {#MyAppName}";   Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}";     Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+
+[Code]
+procedure InitializeWizard;
+begin
+  MsgBox(CustomMessage('SmartScreenNote'), mbInformation, MB_OK);
+end;
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch {#MyAppName}"; Flags: nowait postinstall skipifsilent
