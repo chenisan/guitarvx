@@ -1,41 +1,47 @@
-# GuitarViz
+# 🎸 GuitarViz — 吉他即時視覺化
 
-Real-time electric guitar visualizer with GPU-accelerated particle effects.
-
-## ⬇️ Download
-
-[![Download](https://img.shields.io/github/v/release/chenisan/guitarvx?label=Download%20Installer&style=for-the-badge&color=6a0dad)](https://github.com/chenisan/guitarvx/releases/latest/download/GuitarViz_Setup.exe)
-
-> Windows 10/11 x64 only — double-click to install, no other software required.
+即時分析吉他音頻，用 GPU 粒子特效呈現每個音符的能量。
 
 ---
 
-## Features
+## ⬇️ 下載安裝
 
-- Real-time pitch and onset detection via aubio (YIN + HFC)
-- GPU-accelerated particle system with fluid curl-noise motion
-- Three-band frequency visualization — purple (high) / green (mid) / blue (low)
-- Bloom glow, trail effects and screen shake on note attacks
-- Breathing blue ring that pulses with low-frequency energy
-- Fullscreen at native resolution (tested at 2560×1440, 144 fps)
+**[👉 點此下載 GuitarViz_Setup.exe](https://github.com/chenisan/guitarvx/releases/latest/download/GuitarViz_Setup.exe)**
 
-## System Requirements
+> 雙擊安裝即可，不需要另外安裝 Python 或其他程式。
 
-| | |
-|---|---|
-| OS | Windows 10 / 11 x64 |
-| GPU | OpenGL 4.1+ (any modern discrete or integrated GPU) |
-| Audio | Microphone or audio interface |
+---
 
-## Keyboard Shortcuts
+## 畫面效果
 
-| Key | Action |
-|-----|--------|
-| `ESC` | Quit |
-| `Space` | Pause / Resume |
-| `F` | Toggle fullscreen |
-| `C` | Toggle color mode (pitch / random) |
+- **紫色**粒子 + 波形 → 高頻（弦音泛音、撥弦音頭）
+- **綠色**粒子 + 波形 → 中頻（吉他主要音符範圍）
+- **藍色**粒子 + 波形 → 低頻（低音弦、琴身共鳴）
+- 粒子使用流體旋度場運動，隨音符起伏漂浮
+- 每次撥弦觸發閃電弧光 + 衝擊圈 + 畫面震動
+- 藍色呼吸光圈隨低頻能量即時伸縮
 
-## License
+---
 
-MIT License — see [LICENSE](LICENSE)
+## 系統需求
+
+- **作業系統**：Windows 10 / 11（64位元）
+- **顯示卡**：支援 OpenGL 4.1（獨顯或現代內顯皆可）
+- **音訊輸入**：麥克風或吉他音效介面
+
+---
+
+## 鍵盤快捷鍵
+
+| 按鍵 | 功能 |
+|------|------|
+| `ESC` | 結束程式 |
+| `Space` | 暫停 / 繼續 |
+| `F` | 切換全螢幕 |
+| `C` | 切換顏色模式 |
+
+---
+
+## 授權
+
+MIT License — 開源免費使用，見 [LICENSE](LICENSE)
