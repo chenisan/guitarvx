@@ -425,28 +425,89 @@ def select_device() -> int:
     input_devs = [(i, d) for i, d in enumerate(devs) if d["max_input_channels"] > 0]
 
     if not input_devs:
-        print("\n[ERROR] No audio input devices found.")
-        print("  → WSL2 has no audio without WSLg. Run from Windows instead:")
-        print("  python guitar_viz.py")
+        _fatal_dialog("No audio input devices found.\n\nPlease connect a microphone or audio interface and restart.")
         sys.exit(1)
 
     default_idx = sd.default.device[0]
     if default_idx < 0 or default_idx >= len(devs):
         default_idx = input_devs[0][0]
 
-    print("\n═══ Audio Input Devices ════════════════════════════════════════")
-    for i, d in input_devs:
-        tag = " ◀" if i == default_idx else "  "
-        print(f"{tag} [{i:3d}]  {d['name']:<46}"
-              f"ch:{d['max_input_channels']}  sr:{int(d['default_samplerate'])}")
-    print("════════════════════════════════════════════════════════════════\n")
+    # ── terminal mode ────────────────────────────────────────────────────────
+    if sys.stdin and sys.stdin.isatty():
+        print("\n═══ Audio Input Devices ════════════════════════════════════════")
+        for i, d in input_devs:
+            tag = " ◀" if i == default_idx else "  "
+            print(f"{tag} [{i:3d}]  {d['name']:<46}"
+                  f"ch:{d['max_input_channels']}  sr:{int(d['default_samplerate'])}")
+        print("════════════════════════════════════════════════════════════════\n")
+        try:
+            ans = input(f"Device index [{default_idx}]: ").strip()
+            idx = int(ans) if ans else default_idx
+        except (ValueError, EOFError):
+            idx = default_idx
+        print(f"→ [{idx}]  {sd.query_devices(idx)['name']}\n")
+        return idx
+
+    # ── packaged / no-console mode → tkinter dialog ──────────────────────────
+    return _select_device_gui(input_devs, default_idx)
+
+
+def _fatal_dialog(msg: str):
+    """Show error in a tkinter popup (works without a console)."""
     try:
-        ans = input(f"Device index [{default_idx}]: ").strip()
-        idx = int(ans) if ans else default_idx
-    except (ValueError, EOFError):
-        idx = default_idx
-    print(f"→ [{idx}]  {sd.query_devices(idx)['name']}\n")
-    return idx
+        import tkinter as tk
+        from tkinter import messagebox
+        root = tk.Tk(); root.withdraw()
+        messagebox.showerror("GuitarViz — Error", msg)
+        root.destroy()
+    except Exception:
+        print(msg)
+
+
+def _select_device_gui(input_devs: list, default_idx: int) -> int:
+    """Tkinter device-picker dialog for packaged (no-console) mode."""
+    try:
+        import tkinter as tk
+        from tkinter import ttk
+
+        chosen = [default_idx]
+
+        root = tk.Tk()
+        root.title("GuitarViz — Select Audio Input")
+        root.resizable(False, False)
+        root.configure(bg="#1a1a2e")
+
+        tk.Label(root, text="Select audio input device:",
+                 bg="#1a1a2e", fg="white",
+                 font=("Segoe UI", 11)).pack(padx=20, pady=(16, 6))
+
+        var = tk.StringVar()
+        labels = [f"{i:3d}  {d['name']}" for i, d in input_devs]
+        default_label = next((l for l in labels if l.startswith(f"{default_idx:3d}")), labels[0])
+        var.set(default_label)
+
+        cb = ttk.Combobox(root, textvariable=var, values=labels,
+                          state="readonly", width=52, font=("Consolas", 10))
+        cb.pack(padx=20, pady=4)
+
+        def on_ok():
+            sel = var.get()
+            chosen[0] = int(sel.split()[0])
+            root.destroy()
+
+        tk.Button(root, text="  Start  ", command=on_ok,
+                  bg="#6a0dad", fg="white",
+                  font=("Segoe UI", 11, "bold"),
+                  relief="flat", padx=12, pady=6).pack(pady=(10, 16))
+
+        root.bind("<Return>", lambda _: on_ok())
+        root.eval("tk::PlaceWindow . center")
+        root.mainloop()
+        return chosen[0]
+
+    except Exception:
+        # tkinter unavailable — silently fall back to default
+        return default_idx
 
 
 class Audio:

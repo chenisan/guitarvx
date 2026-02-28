@@ -32,7 +32,7 @@ a = Analysis(
     ),
     hookspath=[],
     runtime_hooks=[],
-    excludes=['tkinter', 'matplotlib', 'scipy', 'PIL', 'cv2'],
+    excludes=['matplotlib', 'scipy', 'PIL', 'cv2'],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
